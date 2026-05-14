@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>小米 SU7 - 人车合一，我心澎湃</title>
+  <style>
+    /* CSS Variables / Design Tokens */
+    :root {
+      --su7-bg: #000000;
+      --su7-text-primary: #FFFFFF;
+      --su7-text-secondary: rgba(255, 255, 255, 0.5);
+      --su7-accent: #1E90FF; /* 海湾蓝 */
+      --su7-accent-hover: #3a9dff;
+      --su7-border: rgba(255, 255, 255, 0.15);
+      
+      --font-display: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--su7-bg);
+      color: var(--su7-text-primary);
+      font-family: var(--font-display);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Layout */
+    .hero-poster {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Header / Navigation */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 4rem;
+      animation: fadeInDown 1.2s var(--ease-out-expo) forwards;
+      opacity: 0;
+    }
+
+    .brand-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-logo svg {
+      width: 32px;
+      height: 32px;
+      fill: #FF6900; /* 小米品牌橙 */
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--su7-text-secondary);
+    }
+
+    .nav-links a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--su7-text-primary);
+    }
+
+    /* Main Content */
+    main {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    .title-group {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1.2s var(--ease-out-expo) 0.2s forwards;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      font-weight: 400;
+      color: var(--su7-text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    /* Hero Image */
+    .hero-image-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .hero-image {
+      width: 100%;
+      max-width: 1600px;
+      height: auto;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.05);
+      animation: imageReveal 2s var(--ease-out-expo) 0.4s forwards;
+      mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    }
+
+    /* Bottom Stats & Actions */
+    .bottom-bar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 4rem 4rem 4rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1.2s var(--ease-out-expo) 0.6s forwards;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: 5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--su7-text-secondary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .actions {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .btn {
+      padding: 1rem 3rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out-expo);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background-color: var(--su7-accent);
+      color: #fff;
+      border: 1px solid var(--su7-accent);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--su7-accent-hover);
+      transform: scale(1.02);
+      box-shadow: 0 8px 24px rgba(30, 144, 255, 0.3);
+    }
+
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--su7-text-primary);
+      border: 1px solid var(--su7-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-ghost:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes imageReveal {
+      from {
+        opacity: 0;
+        transform: scale(1.05);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        padding: 1.5rem 2rem;
+      }
+      
+      .nav-links {
+        display: none; /* Hide on mobile for simplicity, could add hamburger */
+      }
+      
+      main {
+        margin-top: 2rem;
+      }
+
+      .hero-image-container {
+        transform: translate(-50%, -35%);
+      }
+
+      .hero-image {
+        width: 150vw; /* Bleed off edges */
+        max-width: none;
+      }
+
+      .bottom-bar {
+        padding: 0 2rem 3rem 2rem;
+      }
+
+      .stats-container {
+        gap: 2.5rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+
+      .actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-poster">
+    <!-- Header -->
+    <header>
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.4 12h19.2v24H14.4V12zm4.8 4.8v14.4h9.6V16.8h-9.6zm-9.6-4.8h4.8v24H9.6V12zm24 0h4.8v24h-4.8V12z"/>
+        </svg>
+        XIAOMI
+      </div>
+      <nav class="nav-links">
+        <a href="#su7">小米 SU7</a>
+        <a href="#design">设计</a>
+        <a href="#performance">性能</a>
+        <a href="#tech">智能科技</a>
+      </nav>
+    </header>
+
+    <!-- Main Title -->
+    <main>
+      <div class="title-group">
+        <h1>Xiaomi SU7</h1>
+        <h2>人车合一，我心澎湃</h2>
+      </div>
+    </main>
+
+    <!-- Hero Image Background -->
+    <div class="hero-image-container">
+      <img 
+        src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Xiaomi%20SU7%20car%2C%20sleek%20electric%20vehicle%2C%20gulf%20blue%20color%2C%20cinematic%20lighting%2C%20studio%20shot%2C%20dark%20background%2C%208k%20resolution%2C%20highly%20detailed%2C%20photorealistic&image_size=landscape_16_9" 
+        alt="Xiaomi SU7 Gulf Blue" 
+        class="hero-image"
+      />
+    </div>
+
+    <!-- Bottom Stats & Actions -->
+    <div class="bottom-bar">
+      <div class="stats-container">
+        <div class="stat-item">
+          <span class="stat-value">2.78s</span>
+          <span class="stat-label">零百加速</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">800km</span>
+          <span class="stat-label">超长续航</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">265km/h</span>
+          <span class="stat-label">最高时速</span>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <a href="#order" class="btn btn-primary">立即定购</a>
+        <a href="#explore" class="btn btn-ghost">了解更多</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Optional: Add a subtle parallax effect on mouse move to enhance the "cinematic" feel
+    document.addEventListener('mousemove', (e) => {
+      const img = document.querySelector('.hero-image');
+      if (!img) return;
+      
+      const x = (e.clientX / window.innerWidth - 0.5) * 15;
+      const y = (e.clientY / window.innerHeight - 0.5) * 15;
+      
+      // Keep the initial scale(1) and add translate
+      img.style.transform = `scale(1.02) translate(${x}px, ${y}px)`;
+    });
+  </script>
+</body>
+</html>

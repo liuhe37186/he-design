@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雪碧 - 透心凉，心飞扬</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    /* Reset basic styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: #008b47;
+    }
+
+    /* Vue App Container */
+    #app {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* CSS Variables */
+    :root {
+      --sprite-green-dark: #006b38;
+      --sprite-green-main: #008b47;
+      --sprite-green-light: #a1d884;
+      --sprite-yellow: #ffd700;
+      --text-primary: #ffffff;
+    }
+
+    .hero-poster {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--sprite-green-dark) 0%, var(--sprite-green-main) 50%, var(--sprite-green-light) 100%);
+      color: var(--text-primary);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 顶部导航 */
+    .header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 5%;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 1s ease 0.5s;
+    }
+    
+    .logo {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--text-primary);
+    }
+    
+    .nav {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+    
+    .nav a:hover {
+      color: var(--sprite-yellow);
+    }
+
+    /* 核心内容区 */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .text-content {
+      flex: 1;
+      max-width: 600px;
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 1s ease 0.2s;
+    }
+    
+    .sub-title {
+      font-size: 1.5rem;
+      color: var(--sprite-yellow);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      letter-spacing: 4px;
+    }
+    
+    .main-title {
+      font-size: clamp(4rem, 8vw, 8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .description {
+      font-size: 1.125rem;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+    }
+
+    /* 按钮样式 */
+    .cta-button {
+      position: relative;
+      padding: 1rem 3rem;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--sprite-green-dark);
+      background: var(--sprite-yellow);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+    }
+    
+    .cta-button:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 4px;
+    }
+
+    /* 视觉素材区 */
+    .visual-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1s ease 0.4s;
+    }
+    
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+    }
+    
+    .image-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+    
+    .product-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    
+    .product-image:hover {
+      transform: scale(1.05);
+    }
+
+    /* 气泡动效 */
+    .bubbles-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -50px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      backdrop-filter: blur(2px);
+      animation: float-up linear infinite;
+    }
+
+    @keyframes float-up {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* 页面加载完成后的动画状态 */
+    .hero-poster.is-loaded .header,
+    .hero-poster.is-loaded .text-content,
+    .hero-poster.is-loaded .visual-content {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 1024px) {
+      .hero-content {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+      }
+      
+      .text-content {
+        transform: translateY(-30px);
+        margin-bottom: 3rem;
+      }
+      
+      .text-content .description {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .visual-content {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header .nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <main class="hero-poster" :class="{ 'is-loaded': isLoaded }">
+      <!-- 背景气泡 -->
+      <div class="bubbles-container">
+        <div
+          v-for="bubble in bubbles"
+          :key="bubble.id"
+          class="bubble"
+          :style="{
+            width: `${bubble.size}px`,
+            height: `${bubble.size}px`,
+            left: `${bubble.left}%`,
+            animationDuration: `${bubble.duration}s`,
+            animationDelay: `${bubble.delay}s`
+          }"
+        ></div>
+      </div>
+
+      <!-- 顶部导航 -->
+      <header class="header">
+        <div class="logo">SPRITE</div>
+        <nav class="nav">
+          <a href="#products">产品系列</a>
+          <a href="#campaign">活动专区</a>
+          <a href="#about">品牌故事</a>
+        </nav>
+      </header>
+
+      <!-- 核心内容区 -->
+      <section class="hero-content">
+        <div class="text-content">
+          <h2 class="sub-title">透心凉，心飞扬</h2>
+          <h1 class="main-title">STAY<br/>REFRESHED</h1>
+          <p class="description">
+            全新升级配方，一口引爆冰爽极限。<br/>
+            冰块与柠檬的完美碰撞，唤醒你的每一个细胞。
+          </p>
+          <button class="cta-button">
+            即刻畅饮
+          </button>
+        </div>
+
+        <div class="visual-content">
+          <div class="image-wrapper">
+            <img 
+              src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A%20refreshing%20glass%20of%20Sprite%20drink%20with%20ice%20cubes%2C%20lemon%20slices%2C%20and%20dynamic%20water%20splashes%2C%20clean%20vibrant%20green%20background%2C%20commercial%20photography%2C%208k%2C%20hyper-detailed&image_size=portrait_4_3" 
+              alt="Sprite refreshing drink" 
+              class="product-image"
+            />
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const { createApp, ref, onMounted } = Vue
+
+    createApp({
+      setup() {
+        const isLoaded = ref(false);
+        const bubbles = ref(
+          Array.from({ length: 20 }).map((_, i) => ({
+            id: i,
+            size: Math.random() * 20 + 10,
+            left: Math.random() * 100,
+            duration: Math.random() * 5 + 3,
+            delay: Math.random() * 5,
+          }))
+        );
+
+        onMounted(() => {
+          setTimeout(() => {
+            isLoaded.value = true;
+          }, 100);
+        });
+
+        return {
+          isLoaded,
+          bubbles
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

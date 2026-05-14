@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes 智能体 | 开源可自托管的自进化AI智能体框架</title>
+  <style>
+    :root {
+      /* Design Tokens: 颜色系统 */
+      --color-bg: #ffffff;
+      --color-surface: #f9fafb;
+      --color-border: #e5e7eb;
+      --color-text-primary: #111827;
+      --color-text-secondary: #4b5563;
+      --color-accent: #000000;
+      --color-accent-hover: #374151;
+      
+      /* Design Tokens: 流式间距 (Clamp) */
+      --space-sm: clamp(0.75rem, 1.5vw, 1rem);
+      --space-md: clamp(1.5rem, 3vw, 2.5rem);
+      --space-lg: clamp(3rem, 6vw, 5rem);
+      --space-xl: clamp(5rem, 10vw, 8rem);
+      
+      /* Design Tokens: 圆角 */
+      --radius-sm: 0.5rem;
+      --radius-md: 1rem;
+      --radius-lg: 1.5rem;
+      
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* 深色模式适配 */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-bg: #0a0a0a;
+        --color-surface: #171717;
+        --color-border: #262626;
+        --color-text-primary: #f9fafb;
+        --color-text-secondary: #a3a3a3;
+        --color-accent: #ffffff;
+        --color-accent-hover: #e5e7eb;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 容器布局 */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      background-color: color-mix(in srgb, var(--color-bg) 80%, transparent);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4rem;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Hero Section (首屏主命题区) */
+    .hero {
+      padding: var(--space-xl) 0 var(--space-lg);
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-md);
+      font-weight: 500;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      margin-bottom: var(--space-md);
+      max-width: 900px;
+      margin-inline: auto;
+    }
+
+    .hero p {
+      font-size: clamp(1.125rem, 2vw, 1.5rem);
+      color: var(--color-text-secondary);
+      max-width: 700px;
+      margin: 0 auto var(--space-md);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* 按钮交互样式 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background-color: var(--color-accent);
+      color: var(--color-bg);
+      border: 1px solid var(--color-accent);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-surface);
+      transform: translateY(-1px);
+    }
+
+    /* Features Section (特性阵列区) */
+    .features {
+      padding: var(--space-lg) 0;
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .features-header h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.03em;
+    }
+
+    .feature-grid {
+      display: grid;
+      /* 响应式断点：使用 grid 自动流式布局，而非写死宽度 */
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .feature-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.05);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background-color: var(--color-bg);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-sm);
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-card p {
+      color: var(--color-text-secondary);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* Footer CTA (底部操作号召) */
+    .cta-bottom {
+      padding: var(--space-xl) 0;
+      text-align: center;
+      background-color: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .cta-bottom h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: var(--space-md);
+      letter-spacing: -0.03em;
+    }
+
+    /* Footer */
+    footer {
+      padding: var(--space-md) 0;
+      text-align: center;
+      color: var(--color-text-secondary);
+      border-top: 1px solid var(--color-border);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav-inner">
+      <div class="logo">Hermes</div>
+      <a href="#deploy" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">立即部署</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. 首屏模块 -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge">v1.0 开源发布</div>
+        <h1>随你成长、自主运行、技能沉淀</h1>
+        <p>Hermes 是开源可自托管的自进化 AI 智能体框架，打破传统 AI 单次会话局限，为您打造全天候私人智能分身。</p>
+        <div class="hero-actions">
+          <a href="#start" class="btn btn-primary">开始使用</a>
+          <a href="#github" class="btn btn-secondary">查看源码</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 特性阵列模块 -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="features-header">
+          <h2>全场景自主能力</h2>
+        </div>
+        <div class="feature-grid">
+          
+          <article class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>分层持久记忆系统</h3>
+            <p>搭载多层级记忆架构，跨会话永久留存用户偏好、项目上下文与业务规范，自动精准检索历史信息，无需重复交代背景，越用越懂需求。</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">⚙️</div>
+            <h3>技能自动沉淀复用</h3>
+            <p>任务完成后自主提炼流程经验，固化为可复用 Skill 技能库，形成专属工作模板，同类任务一键复刻执行，效率持续迭代升级。</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>全场景自主任务调度</h3>
+            <p>内置 47+ 实用工具链，支持多步骤工作流自主规划与串联，可实现代码开发、数据处理、文档整理、竞品监测、周报生成等复杂任务全自动落地。</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🕒</div>
+            <h3>离线定时自动值守</h3>
+            <p>支持服务器长期驻留运行，内置定时调度能力，7×24小时离线待命，无人值守也可自动执行脚本、数据备份、站点监控、消息推送等定时任务。</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>多端跨平台适配</h3>
+            <p>兼容 Windows/Mac/Linux 多系统，支持微信、飞书等多终端远程指令下发，随时随地调度智能体处理事务，全场景无缝联动。</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>开源私有化安全可控</h3>
+            <p>MIT 开源协议支持本地私有化部署，数据全程留存本地不外泄，兼顾隐私安全与个性化定制，适配个人办公、开发者研发、企业自动化多类场景。</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 底部行动号召模块 -->
+    <section class="cta-bottom">
+      <div class="container">
+        <h2>打造您的全天候私人智能分身</h2>
+        <div class="hero-actions">
+          <a href="#deploy" class="btn btn-primary">免费本地部署</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Hermes AI Agent Framework. Released under the MIT License.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
