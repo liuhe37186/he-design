@@ -58,5 +58,11 @@
 - **响应式重构**：以结构和 Grid 轨道的重构为主应对断点变化，避免单纯的缩放 (`transform: scale`)。
 - **可访问性与交互**：保留焦点状态（`focus-visible`），保障文本可被选中，图标需包含 `aria-label`。
 
+## 演示 (Demo)
+
+![Sprite Poster Demo](https://raw.githubusercontent.com/liuhe37186/he-design/main/demo/sprite.jpg)
+
+![Xiaomi Poster Demo](https://raw.githubusercontent.com/liuhe37186/he-design/main/demo/xiaomi.png)
+
 ---
 *此技能要求先思考范式与结构，再讨论样式与装饰，确保交付的不仅是视觉图，而是生产级的高级 Web 资产。*
